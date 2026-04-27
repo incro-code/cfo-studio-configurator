@@ -5,463 +5,867 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CFO Studio — Pricing Configurator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --blue: #3D5A99;
-    --blue-light: rgba(61,90,153,.08);
-    --blue-mid: rgba(61,90,153,.15);
-    --text: #1a1a1a;
-    --text-2: #5a5a5a;
-    --text-3: #9a9a9a;
-    --border: rgba(0,0,0,.08);
-    --border-2: rgba(0,0,0,.14);
-    --surface: #ffffff;
-    --surface-2: #f7f7f6;
-    --surface-3: #f0f0ee;
-    --radius: 10px;
-    --radius-lg: 16px;
-  }
+:root {
+  --bg:        #fafaf9;
+  --surface:   #ffffff;
+  --surface-2: #f5f5f4;
+  --surface-3: #efefee;
+  --border:    #e7e5e4;
+  --border-2:  #d6d3d1;
+  --text:      #0c0a09;
+  --text-2:    #57534e;
+  --text-3:    #a8a29e;
+  --accent:    #1c1917;
+  --accent-2:  #292524;
+  --green:     #059669;
+  --radius:    6px;
+  --radius-lg: 10px;
+}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--surface-2);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 48px 24px;
-    line-height: 1.5;
-  }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
 
-  .page {
-    max-width: 860px;
-    margin: 0 auto;
-  }
+.shell { max-width: 1120px; margin: 0 auto; padding: 0 32px 80px; }
 
-  header {
-    margin-bottom: 40px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 0; border-bottom: 1px solid var(--border); margin-bottom: 64px;
+}
+.nav-brand { font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+.nav-badge {
+  font-size: 11px; color: var(--text-3);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 12px;
+}
 
-  .logo-text { font-size: 17px; font-weight: 500; color: var(--text); letter-spacing: -.01em; }
+.page-header { margin-bottom: 56px; max-width: 640px; }
+.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 16px; }
+.page-title { font-size: 38px; font-weight: 300; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 16px; }
+.page-subtitle { font-size: 15px; color: var(--text-2); font-weight: 300; }
 
-  .header-note {
-    font-size: 12px;
-    color: var(--text-3);
-    background: var(--surface-3);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px 12px;
-  }
+.section { margin-bottom: 48px; }
+.section-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 18px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.section-title { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+.section-hint { font-size: 12px; color: var(--text-3); margin-left: auto; }
 
-  h2 {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    margin: 32px 0 12px;
-  }
+.btn-secondary {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text-2);
+  font-family: inherit; font-size: 11px; padding: 6px 12px;
+  border-radius: var(--radius); cursor: pointer; transition: all .15s; font-weight: 500;
+}
+.btn-secondary:hover { border-color: var(--border-2); color: var(--text); }
+.btn-secondary.active { border-color: var(--accent); color: var(--accent); background: var(--surface-2); }
 
-  h2:first-of-type { margin-top: 0; }
+.toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 36px; flex-wrap: wrap; }
 
-  .module-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 8px;
-  }
+.platform-fee-bar {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-bottom: 36px; flex-wrap: wrap;
+}
+.platform-fee-bar .lbl { font-size: 12px; color: var(--text-3); letter-spacing: .04em; text-transform: uppercase; font-weight: 500; }
+.platform-fee-bar .desc { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.platform-fee-bar .val { font-size: 13px; color: var(--text); font-weight: 500; }
+.platform-fee-edit { display: flex; align-items: center; gap: 6px; }
 
-  .mod-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    cursor: pointer;
-    transition: border-color .12s, background .12s, transform .1s;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    user-select: none;
-  }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-  .mod-card:hover { border-color: var(--border-2); transform: translateY(-1px); }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 14px 16px;
+  cursor: pointer; transition: border-color .15s, background .15s;
+  display: flex; align-items: flex-start; gap: 12px; user-select: none;
+}
+.card:hover { border-color: var(--border-2); }
+.card.selected { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(28,25,23,.04); }
 
-  .mod-card.selected {
-    border-color: var(--blue);
-    border-width: 1.5px;
-    background: var(--blue-light);
-  }
+.check {
+  width: 18px; height: 18px; min-width: 18px;
+  border: 1px solid var(--border-2); border-radius: 4px;
+  background: var(--surface); display: flex; align-items: center; justify-content: center;
+  margin-top: 1px; transition: all .15s; flex-shrink: 0;
+}
+.card.selected .check { background: var(--accent); border-color: var(--accent); }
+.check-svg { display: none; }
+.card.selected .check-svg { display: block; }
 
-  .check {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    border: 1px solid var(--border-2);
-    border-radius: 4px;
-    background: var(--surface-2);
-    margin-top: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background .12s, border-color .12s;
-  }
+.card-body { flex: 1; min-width: 0; }
+.card-name { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
 
-  .mod-card.selected .check {
-    background: var(--blue);
-    border-color: var(--blue);
-  }
+.badge {
+  display: inline-block; font-size: 10px; font-weight: 500;
+  padding: 2px 7px; border-radius: 20px; margin-bottom: 6px; letter-spacing: .03em;
+}
+.badge-core  { background: #eff6ff; color: #1d4ed8; }
+.badge-intel { background: #ecfdf5; color: #047857; }
+.badge-strat { background: #f5f3ff; color: #6d28d9; }
+.badge-gtm   { background: #fffbeb; color: #b45309; }
+.badge-ai    { background: #fdf2f8; color: #be185d; }
+.badge-ent   { background: #fef2f2; color: #b91c1c; }
 
-  .check-icon { display: none; }
-  .mod-card.selected .check-icon { display: block; }
+.card-price { font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.card-price s { opacity: .5; }
 
-  .mod-body { flex: 1; min-width: 0; }
+.price-edit { display: flex; align-items: center; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+.price-field {
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 3px 7px; font-size: 11px;
+  font-family: inherit; color: var(--text-2); width: 84px;
+  outline: none; transition: border-color .15s; font-variant-numeric: tabular-nums;
+}
+.price-field:focus { border-color: var(--accent); color: var(--text); background: var(--surface); }
+.psep { font-size: 10px; color: var(--text-3); }
 
-  .mod-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 3px;
-  }
+/* TIER GROUPS */
+.tier-group { margin-bottom: 24px; }
+.tier-group:last-child { margin-bottom: 0; }
+.tier-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 10px; padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border-2);
+}
+.tier-name { font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+.tier-name.t-core  { color: #1d4ed8; }
+.tier-name.t-intel { color: #047857; }
+.tier-name.t-strat { color: #6d28d9; }
+.tier-name.t-gtm   { color: #b45309; }
+.tier-bundle-info {
+  font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums;
+}
+.tier-bundle-info strong { color: var(--text-2); font-weight: 500; }
+.tier-bundle-active { color: var(--green) !important; }
+.tier-bundle-active strong { color: var(--green) !important; }
 
-  .mod-badge {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 500;
-    padding: 1px 6px;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    letter-spacing: .02em;
-  }
+/* DATA SOURCES */
+.sources-table {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.src-row {
+  display: grid; grid-template-columns: 24px 1fr auto auto;
+  align-items: center; gap: 12px;
+  padding: 11px 16px; border-bottom: 1px solid var(--border);
+  transition: background .15s;
+}
+.src-row:last-child { border-bottom: none; }
+.src-row:hover, .src-row.selected { background: var(--surface-2); }
+.src-row .check { margin-top: 0; cursor: pointer; }
+.src-row.selected .check { background: var(--accent); border-color: var(--accent); }
+.src-input {
+  background: transparent; border: none; font-family: inherit;
+  font-size: 13px; font-weight: 500; color: var(--text);
+  outline: none; padding: 4px 0; width: 100%;
+  border-bottom: 1px solid transparent; transition: border-color .15s;
+}
+.src-input:focus, .src-input:hover { border-bottom-color: var(--border-2); }
+.src-input::placeholder { color: var(--text-3); font-weight: 400; }
+.src-tag {
+  font-size: 10px; color: var(--text-3); white-space: nowrap;
+  padding: 3px 8px; border-radius: 20px; background: var(--surface-2);
+  border: 1px solid var(--border); font-variant-numeric: tabular-nums;
+}
+.src-tag.included { color: var(--green); background: #f0fdf4; border-color: #bbf7d0; }
+.src-delete {
+  background: transparent; border: none; color: var(--text-3);
+  cursor: pointer; font-size: 16px; line-height: 1; padding: 4px 8px;
+  border-radius: 4px; transition: all .15s;
+}
+.src-delete:hover { background: #fee2e2; color: #dc2626; }
+.src-add-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; padding: 12px; cursor: pointer; color: var(--text-3);
+  font-size: 12px; font-weight: 500;
+  transition: background .15s, color .15s;
+  border-top: 1px solid var(--border); background: var(--surface-2);
+}
+.src-add-row:hover { background: var(--surface-3); color: var(--text); }
 
-  .badge-core    { background: rgba(61,90,153,.1);  color: #3D5A99; }
-  .badge-intel   { background: rgba(15,110,86,.1);  color: #0F6E56; }
-  .badge-strat   { background: rgba(83,74,183,.1);  color: #534AB7; }
-  .badge-gtm     { background: rgba(186,117,23,.1); color: #9A6000; }
+.config-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px 22px;
+}
 
-  .mod-price {
-    font-size: 11px;
-    color: var(--text-3);
-    font-family: 'DM Mono', monospace;
-  }
+/* USERS SLIDER */
+.slider-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 0;
+}
+.slider-label { font-size: 13px; color: var(--text-2); min-width: 160px; }
+input[type=range] {
+  flex: 1; -webkit-appearance: none; height: 3px;
+  background: var(--border); border-radius: 2px; outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  background: var(--accent); border-radius: 50%; cursor: pointer;
+}
+input[type=range]::-moz-range-thumb {
+  width: 14px; height: 14px; background: var(--accent);
+  border-radius: 50%; cursor: pointer; border: none;
+}
+.slider-val { font-size: 14px; font-weight: 500; min-width: 30px; text-align: right; font-variant-numeric: tabular-nums; }
 
-  .mod-price s { opacity: .45; }
+/* BILLING TOGGLE */
+.billing-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0 4px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+.billing-label { font-size: 13px; color: var(--text-2); }
+.billing-toggle {
+  display: inline-flex; gap: 2px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 3px;
+}
+.billing-btn {
+  background: transparent; border: none; color: var(--text-2);
+  font-family: inherit; font-size: 12px; font-weight: 500;
+  padding: 6px 14px; border-radius: 4px; cursor: pointer;
+  transition: all .15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.billing-btn.active { background: var(--accent); color: #fff; }
+.billing-btn .save-tag {
+  font-size: 10px; padding: 1px 6px; border-radius: 10px;
+  background: rgba(5,150,105,.18); color: #6ee7b7; font-weight: 500;
+}
+.billing-btn:not(.active) .save-tag { background: #ecfdf5; color: var(--green); }
 
-  .addon-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
+.bundle-tag {
+  display: none; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--green);
+  background: #f0fdf4; border: 1px solid #bbf7d0;
+  border-radius: 20px; padding: 3px 10px; margin-left: auto;
+}
+.bundle-tag.visible { display: inline-flex; }
 
-  .config-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 14px;
-  }
+.two-col { display: grid; grid-template-columns: 1fr 320px; gap: 32px; align-items: start; }
 
-  .config-label {
-    font-size: 13px;
-    color: var(--text-2);
-    min-width: 130px;
-  }
+.summary-panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px;
+  position: sticky; top: 24px;
+}
+.sum-currency {
+  display: flex; gap: 2px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 3px;
+  margin-bottom: 18px;
+}
+.sum-currency .cur-btn {
+  flex: 1; background: transparent; border: none; color: var(--text-3);
+  font-family: inherit; font-size: 11px; font-weight: 500;
+  padding: 5px 0; border-radius: 4px; cursor: pointer; transition: all .15s;
+}
+.sum-currency .cur-btn.active { background: var(--accent); color: #fff; }
 
-  input[type=range] {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 4px;
-    background: var(--surface-3);
-    border-radius: 2px;
-    outline: none;
-    border: 1px solid var(--border);
-  }
+.sum-header { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 14px; }
+.sum-line {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12px; color: var(--text-2); padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.sum-line:last-of-type { border-bottom: none; }
+.sum-line span:last-child { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+.sum-line .strikethrough span:last-child { text-decoration: line-through; color: var(--text-3); }
+.sum-empty { font-size: 12px; color: var(--text-3); padding: 8px 0; font-style: italic; }
 
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    background: var(--blue);
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 1px 4px rgba(61,90,153,.3);
-  }
+.total-block { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-2); }
+.total-label { font-size: 12px; color: var(--text-2); margin-bottom: 4px; }
+.total-amount { font-size: 32px; font-weight: 300; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+.total-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; margin-bottom: 16px; }
+.meta-row {
+  display: flex; justify-content: space-between;
+  padding: 7px 0; border-top: 1px solid var(--border);
+}
+.meta-label { font-size: 11px; color: var(--text-3); }
+.meta-val { font-size: 11px; color: var(--text-2); font-weight: 500; font-variant-numeric: tabular-nums; }
 
-  .config-val {
-    font-size: 14px;
-    font-weight: 500;
-    font-family: 'DM Mono', monospace;
-    color: var(--text);
-    min-width: 28px;
-    text-align: right;
-  }
+.pdf-btn {
+  width: 100%; margin-top: 20px; padding: 11px 20px;
+  background: var(--accent); color: #fff; border: none;
+  border-radius: var(--radius); font-size: 13px; font-weight: 500;
+  font-family: inherit; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .15s; letter-spacing: -.005em;
+}
+.pdf-btn:hover { background: var(--accent-2); }
 
-  .summary {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 20px 24px;
-    margin-top: 32px;
-  }
+/* PDF / PRINT */
+.pdf-document { display: none; }
+@media print {
+  @page { margin: 0; size: A4; }
+  body { background: #fff !important; color: #0c0a09 !important; font-size: 11px; }
+  .shell, nav { display: none !important; }
+  .pdf-document { display: block !important; }
+}
+.pdf-document {
+  padding: 22mm 20mm;
+  font-family: 'Inter', sans-serif;
+  color: #0c0a09; background: #fff;
+  font-size: 11px; line-height: 1.5;
+}
+.pdf-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-bottom: 18px; margin-bottom: 28px;
+  border-bottom: 1.5px solid #0c0a09;
+}
+.pdf-brand-block .pdf-brand { font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+.pdf-brand-block .pdf-tag { font-size: 10px; color: #78716c; margin-top: 2px; letter-spacing: .08em; text-transform: uppercase; }
+.pdf-meta { text-align: right; font-size: 10px; color: #78716c; }
+.pdf-meta strong { color: #0c0a09; font-weight: 500; }
+.pdf-h1 { font-size: 24px; font-weight: 300; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 8px; }
+.pdf-lede { font-size: 12px; color: #57534e; max-width: 520px; margin-bottom: 32px; }
+.pdf-section { margin-bottom: 28px; page-break-inside: avoid; }
+.pdf-section-title {
+  font-size: 10px; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: #78716c;
+  padding-bottom: 6px; border-bottom: 1px solid #d6d3d1; margin-bottom: 10px;
+}
+.pdf-list-item {
+  display: grid; grid-template-columns: 1fr auto auto;
+  gap: 16px; padding: 8px 0;
+  border-bottom: 0.5px solid #e7e5e4;
+  align-items: baseline;
+}
+.pdf-list-item:last-child { border-bottom: none; }
+.pdf-name { font-size: 12px; font-weight: 500; }
+.pdf-tier { font-size: 9px; color: #78716c; text-transform: uppercase; letter-spacing: .08em; min-width: 70px; text-align: right; }
+.pdf-amt  { font-size: 11px; font-weight: 500; min-width: 100px; text-align: right; font-variant-numeric: tabular-nums; }
+.pdf-source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; }
+.pdf-source-item {
+  font-size: 11px; padding: 5px 0;
+  border-bottom: 0.5px solid #e7e5e4;
+  display: flex; justify-content: space-between;
+}
+.pdf-source-item span:last-child { color: #78716c; font-size: 10px; }
+.pdf-totals {
+  background: #fafaf9; border: 1px solid #e7e5e4;
+  border-radius: 6px; padding: 18px 22px; margin-top: 12px;
+}
+.pdf-total-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 0;
+}
+.pdf-total-row.divider { border-top: 1px solid #d6d3d1; margin-top: 6px; padding-top: 12px; }
+.pdf-total-row.divider.headline { border-top: 1.5px solid #0c0a09; }
+.pdf-total-label { font-size: 11px; color: #57534e; }
+.pdf-total-val { font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.pdf-total-row.headline .pdf-total-label { font-size: 13px; color: #0c0a09; font-weight: 500; }
+.pdf-total-row.headline .pdf-total-val { font-size: 22px; font-weight: 300; letter-spacing: -.02em; }
+.pdf-foot {
+  margin-top: 32px; padding-top: 14px;
+  border-top: 1px solid #e7e5e4;
+  display: flex; justify-content: space-between;
+  font-size: 9px; color: #a8a29e; letter-spacing: .04em;
+}
+.pdf-empty { font-size: 11px; color: #a8a29e; font-style: italic; padding: 6px 0; }
 
-  .summary-header {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    margin-bottom: 16px;
-  }
-
-  .summary-line {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    color: var(--text-2);
-    padding: 7px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .summary-line:last-of-type { border-bottom: none; }
-  .summary-line span:last-child { color: var(--text); font-weight: 500; font-family: 'DM Mono', monospace; }
-
-  .total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border-2);
-  }
-
-  .total-left { }
-  .total-label { font-size: 15px; font-weight: 500; color: var(--text); }
-  .setup-note { font-size: 12px; color: var(--text-3); margin-top: 3px; font-family: 'DM Mono', monospace; }
-
-  .total-right { text-align: right; }
-  .total-amount { font-size: 28px; font-weight: 300; color: var(--blue); font-family: 'DM Mono', monospace; letter-spacing: -.02em; }
-  .total-period { font-size: 12px; color: var(--text-3); margin-top: 2px; }
-
-  .empty { font-size: 13px; color: var(--text-3); padding: 8px 0; font-style: italic; }
-
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 32px 0;
-  }
-
-  .bundle-notice {
-    font-size: 12px;
-    color: #0F6E56;
-    background: rgba(15,110,86,.07);
-    border: 1px solid rgba(15,110,86,.15);
-    border-radius: 6px;
-    padding: 8px 12px;
-    margin-top: 10px;
-    display: none;
-  }
-
-  .bundle-notice.visible { display: block; }
-
-  @media (max-width: 520px) {
-    .module-grid { grid-template-columns: 1fr; }
-    .addon-grid { grid-template-columns: 1fr; }
-    header { flex-direction: column; align-items: flex-start; }
-  }
+@media (max-width: 840px) {
+  .two-col { grid-template-columns: 1fr; }
+  .summary-panel { position: static; }
+}
+@media (max-width: 560px) {
+  .shell { padding: 0 18px 60px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .page-title { font-size: 28px; }
+}
 </style>
 </head>
 <body>
-<div class="page">
 
-  <header>
+<div class="shell">
+
+  <nav>
+    <span class="nav-brand">CFO Studio</span>
+    <span class="nav-badge">Internal · incro</span>
+  </nav>
+
+  <div class="page-header">
+    <div class="eyebrow">Pricing configurator</div>
+    <h1 class="page-title">Build your CFO Studio<br>deployment.</h1>
+    <p class="page-subtitle">Select modules, configure data sources, and export an implementation-ready offer in PDF.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="left-col">
+
+      <div class="toolbar">
+        <button class="btn-secondary" id="edit-btn" onclick="toggleEdit()">✏ Edit prices</button>
+      </div>
+
+      <!-- PLATFORM FEE -->
+      <div class="platform-fee-bar">
+        <div>
+          <div class="lbl">Platform fee · per user / month</div>
+          <div class="desc">Flat seat price covering all selected modules.</div>
+        </div>
+        <div id="platform-fee-display"></div>
+      </div>
+
+      <!-- DATA SOURCES -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-title">Data sources</span>
+          <span class="section-hint">First 2 included · <span id="src-extra-label">$2,500</span> setup each additional</span>
+        </div>
+        <div class="sources-table" id="sources-table"></div>
+      </div>
+
+      <!-- MODULES -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-title">Modules · setup fees</span>
+        </div>
+        <div id="tier-groups"></div>
+      </div>
+
+      <!-- ADD-ONS -->
+      <div class="section">
+        <div class="section-head"><span class="section-title">Add-ons</span></div>
+        <div class="grid-2" id="addon-grid"></div>
+      </div>
+
+      <!-- CONFIGURATION -->
+      <div class="section">
+        <div class="section-head"><span class="section-title">Configuration</span></div>
+        <div class="config-box">
+          <div class="slider-row">
+            <span class="slider-label">Number of users</span>
+            <input type="range" min="1" max="100" value="5" step="1" id="users-slider">
+            <span class="slider-val" id="users-val">5</span>
+          </div>
+          <div class="billing-row">
+            <span class="billing-label">Billing</span>
+            <div class="billing-toggle">
+              <button class="billing-btn active" id="bill-monthly" onclick="setBilling('monthly')">Monthly</button>
+              <button class="billing-btn" id="bill-yearly" onclick="setBilling('yearly')">Yearly <span class="save-tag">−15%</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SUMMARY -->
     <div>
-      <div class="logo-text">CFO Studio — Pricing configurator</div>
-    </div>
-    <div class="header-note">Internal use · incro</div>
-  </header>
-
-  <h2>Modules</h2>
-  <div class="module-grid" id="module-grid"></div>
-  <div class="bundle-notice" id="bundle-notice">Core bundle discount applied — AI Chat + P&L + Cashflow + Balance Sheet from $10,000 setup.</div>
-
-  <div class="divider"></div>
-
-  <h2>Add-ons</h2>
-  <div class="addon-grid" id="addon-grid"></div>
-
-  <div class="divider"></div>
-
-  <h2>Configuration</h2>
-  <div class="config-row">
-    <span class="config-label">Number of users</span>
-    <input type="range" min="1" max="50" value="5" step="1" id="users-slider">
-    <span class="config-val" id="users-val">5</span>
-  </div>
-  <div class="config-row">
-    <span class="config-label">Data sources</span>
-    <input type="range" min="1" max="10" value="2" step="1" id="sources-slider">
-    <span class="config-val" id="sources-val">2</span>
-  </div>
-
-  <div class="summary">
-    <div class="summary-header">Estimate summary</div>
-    <div id="summary-lines"></div>
-    <div class="total-row">
-      <div class="total-left">
-        <div class="total-label">Monthly subscription</div>
-        <div class="setup-note" id="setup-note"></div>
-      </div>
-      <div class="total-right">
-        <div class="total-amount" id="monthly-total">$0</div>
-        <div class="total-period" id="total-period">/month</div>
+      <div class="summary-panel">
+        <div class="sum-header">Summary</div>
+        <div class="sum-currency">
+          <button class="cur-btn active" onclick="setCurrency('USD')">USD</button>
+          <button class="cur-btn" onclick="setCurrency('EUR')">EUR</button>
+          <button class="cur-btn" onclick="setCurrency('PLN')">PLN</button>
+        </div>
+        <div id="summary-lines"></div>
+        <div class="total-block">
+          <div class="total-label" id="monthly-label">Monthly subscription</div>
+          <div class="total-amount" id="monthly-total">$0</div>
+          <div class="total-sub" id="total-sub">/month · 5 users</div>
+          <div class="meta-row">
+            <span class="meta-label">One-time setup</span>
+            <span class="meta-val" id="setup-total">$0</span>
+          </div>
+          <div class="meta-row" id="annual-row" style="display:none">
+            <span class="meta-label">First-year total</span>
+            <span class="meta-val" id="annual-total">$0</span>
+          </div>
+          <div class="meta-row" id="savings-row" style="display:none">
+            <span class="meta-label" style="color:var(--green)">Annual savings</span>
+            <span class="meta-val" style="color:var(--green)" id="savings-total">$0</span>
+          </div>
+        </div>
+        <button class="pdf-btn" onclick="generatePDF()">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+            <path d="M2.5 11.5h10M7.5 2v7M4.5 6.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Export as PDF
+        </button>
       </div>
     </div>
 
   </div>
-
 </div>
 
+<div class="pdf-document" id="pdf-doc"></div>
+
 <script>
-const MODULES = [
-  {id:'chat',          name:'CFO Studio AI chat',   tier:'core',  badge:'Core',          setup:4000, perUser:45},
-  {id:'pl',            name:'P&L',                  tier:'core',  badge:'Core',          setup:2500, perUser:30},
-  {id:'cashflow',      name:'Cashflow',              tier:'core',  badge:'Core',          setup:2000, perUser:28},
-  {id:'bs',            name:'Balance sheet',         tier:'core',  badge:'Core',          setup:1500, perUser:25},
-  {id:'pva',           name:'Plan vs actual',        tier:'intel', badge:'Intelligence',  setup:2500, perUser:35},
-  {id:'kpi',           name:'KPI tracker',           tier:'intel', badge:'Intelligence',  setup:2000, perUser:30},
-  {id:'reporting',     name:'Reporting',             tier:'intel', badge:'Intelligence',  setup:2500, perUser:30},
-  {id:'forecast',      name:'Forecasting',           tier:'strat', badge:'Strategic',     setup:4000, perUser:50},
-  {id:'budget',        name:'Planning & budgeting',  tier:'strat', badge:'Strategic',     setup:5000, perUser:60},
-  {id:'consolidation', name:'Group consolidation',   tier:'strat', badge:'Strategic',     setup:6000, perUser:65},
-  {id:'uniteco',       name:'Unit economics',        tier:'gtm',   badge:'GTM',           setup:3000, perUser:45},
-  {id:'gtm',           name:'GTM dashboard',         tier:'gtm',   badge:'GTM',           setup:3000, perUser:45},
+// ── DATA ─────────────────────────────────────
+let sources = [
+  { id: 's1',  name: 'ERP system',                type: 'SAP / Oracle / MS BC',                  selected: false },
+  { id: 's2',  name: 'CRM',                        type: 'Salesforce / HubSpot',                  selected: false },
+  { id: 's3',  name: 'Excel / Sheets',             type: 'Manual import',                         selected: false },
+  { id: 's4',  name: 'Bank feeds',                 type: 'Open Banking API / Bank report export', selected: false },
+  { id: 's5',  name: 'E-commerce',                 type: 'Shopify / WooCommerce',                 selected: false },
+  { id: 's6',  name: 'HRIS',                       type: 'Workday / BambooHR',                    selected: false },
+  { id: 's7',  name: 'Billing',                    type: 'Stripe / Chargebee',                    selected: false },
+  { id: 's8',  name: 'PDF / Folder files',         type: 'Reports, statements',                   selected: false },
+  { id: 's9',  name: 'Marketing data',             type: 'Meta Ads / Google Ads',                 selected: false },
+];
+let nextSrcId = 10;
+
+// MODULES grouped by tier with bundle prices
+const TIERS = [
+  {
+    id: 'core', name: 'Core', cls: 't-core', badge: 'Core', badgeCls: 'badge-core',
+    bundlePrice: 10000,
+    modules: [
+      {id:'chat',  name:'CFO Studio AI chat', setup:4000},
+      {id:'pl',    name:'P&L',                setup:3000},
+      {id:'cf',    name:'Cashflow',           setup:2500},
+      {id:'bs',    name:'Balance sheet',      setup:2000},
+      {id:'wflow', name:'Workflows',          setup:3000},
+    ],
+  },
+  {
+    id: 'intel', name: 'Intelligence', cls: 't-intel', badge: 'Intelligence', badgeCls: 'badge-intel',
+    bundlePrice: 15000,
+    modules: [
+      {id:'pva',     name:'Plan vs actual',  setup:3500},
+      {id:'kpi',     name:'KPI tracker',     setup:3000},
+      {id:'report',  name:'Reporting',       setup:3500},
+      {id:'uniteco', name:'Unit economics',  setup:4000},
+      {id:'whse',    name:'Warehouse',       setup:5000, hint:'Production & e-commerce ops'},
+    ],
+  },
+  {
+    id: 'strat', name: 'Strategic', cls: 't-strat', badge: 'Strategic', badgeCls: 'badge-strat',
+    bundlePrice: 20000,
+    modules: [
+      {id:'fore',   name:'Forecasting',          setup:7000},
+      {id:'budget', name:'Planning & budgeting', setup:8000},
+      {id:'consol', name:'Group consolidation',  setup:9000},
+    ],
+  },
+  {
+    id: 'gtm', name: 'GTM', cls: 't-gtm', badge: 'GTM', badgeCls: 'badge-gtm',
+    bundlePrice: 25000,
+    modules: [
+      {id:'gtm',  name:'GTM dashboard',  setup:25000, hint:'Marketing & sales'},
+    ],
+  },
 ];
 
 const ADDONS = [
-  {id:'mcp',    name:'Claude MCP connector', setup:4000, perUser:20, flatMonthly:0},
-  {id:'onprem', name:'On-prem installation', setup:8000, perUser:0,  flatMonthly:700},
+  {id:'mcp',    name:'Claude MCP connector', badgeCls:'badge-ai',  badgeTxt:'AI',         setup:4000, flatMonthly:0},
+  {id:'onprem', name:'On-prem installation', badgeCls:'badge-ent', badgeTxt:'Enterprise', setup:8000, flatMonthly:700},
 ];
 
-const CORE_IDS = ['chat','pl','cashflow','bs'];
-const CORE_BUNDLE_PRICE = 10000;
+const FX  = { USD: 1, EUR: 0.92, PLN: 4.05 };
+const SYM = { USD: '$', EUR: '€', PLN: 'zł' };
 
-let selected = new Set(['chat','pl','cashflow','bs']);
-let selectedAddons = new Set();
+// ── STATE ─────────────────────────────────────
+let currency = 'USD';
+let editMode = false;
 let users = 5;
-let sources = 2;
+let billing = 'monthly'; // 'monthly' | 'yearly'
+let selMods = new Set(['chat','pl','cf','bs']);
+let selAdd = new Set();
+let platformFee = 25;     // USD/user/mo
+let srcExtraSetup = 2500; // USD setup per extra source (>2)
+let srcIncluded = 2;
+let yearlyDiscount = 0.15;
 
-function fmt(n){ return '$' + n.toLocaleString('en-US'); }
+// editable prices
+let prices = {};
+TIERS.forEach(t => {
+  prices['__bundle_' + t.id] = t.bundlePrice;
+  t.modules.forEach(m => { prices[m.id] = { setup: m.setup }; });
+});
+ADDONS.forEach(a => { prices[a.id] = { setup: a.setup, flatMonthly: a.flatMonthly }; });
 
-function checkSVG(){
-  return `<svg class="check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none">
-    <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>`;
-}
+// ── HELPERS ───────────────────────────────────
+const fmt = n => SYM[currency] + Math.round(n * FX[currency]).toLocaleString('en-US');
+const chk = () => `<svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const selSourcesArr = () => sources.filter(s => s.selected);
 
-function hasAllCore(){ return CORE_IDS.every(id => selected.has(id)); }
+// Find which tier a module belongs to
+function tierOf(modId) { return TIERS.find(t => t.modules.some(m => m.id === modId)); }
+function tierAllSelected(tier) { return tier.modules.every(m => selMods.has(m.id)); }
 
-function effectiveSetup(){
-  const mods = MODULES.filter(m => selected.has(m.id));
-  if(hasAllCore()){
-    const nonCore = mods.filter(m => !CORE_IDS.includes(m.id));
-    return CORE_BUNDLE_PRICE + nonCore.reduce((s,m) => s + m.setup, 0);
-  }
-  return mods.reduce((s,m) => s + m.setup, 0);
-}
-
-function renderModules(){
-  const bundled = hasAllCore();
-  document.getElementById('bundle-notice').classList.toggle('visible', bundled);
-  document.getElementById('module-grid').innerHTML = MODULES.map(m => {
-    const isCore = CORE_IDS.includes(m.id);
-    let priceHTML;
-    if(isCore && bundled){
-      priceHTML = `<s>${fmt(m.setup)}</s> bundled · ${fmt(m.perUser)}/user/mo`;
+// Calculate setup cost for modules with tier-bundle logic
+function modulesSetup() {
+  let total = 0;
+  TIERS.forEach(t => {
+    if (tierAllSelected(t)) {
+      total += prices['__bundle_' + t.id];
     } else {
-      priceHTML = `${fmt(m.setup)} setup · ${fmt(m.perUser)}/user/mo`;
+      t.modules.forEach(m => { if (selMods.has(m.id)) total += prices[m.id].setup; });
     }
-    return `<div class="mod-card${selected.has(m.id)?' selected':''}" onclick="toggle('${m.id}')">
-      <div class="check">${checkSVG()}</div>
-      <div class="mod-body">
-        <div class="mod-name">${m.name}</div>
-        <span class="mod-badge badge-${m.tier}">${m.badge}</span>
-        <div class="mod-price">${priceHTML}</div>
-      </div>
+  });
+  return total;
+}
+
+function totalSetup() {
+  let t = modulesSetup();
+  // Extra source setup costs
+  const extraSrc = Math.max(0, selSourcesArr().length - srcIncluded);
+  t += extraSrc * srcExtraSetup;
+  // Add-on setup
+  ADDONS.filter(a => selAdd.has(a.id)).forEach(a => t += prices[a.id].setup);
+  return t;
+}
+
+// ── PLATFORM FEE ─────────────────────────────
+function renderPlatformFee() {
+  const el = document.getElementById('platform-fee-display');
+  if (editMode) {
+    el.innerHTML = `<div class="platform-fee-edit">
+      <input class="price-field" type="number" value="${platformFee}" onchange="setPlatformFee(this.value)">
+      <span class="psep">USD / user / mo</span>
     </div>`;
-  }).join('');
-}
-
-function renderAddons(){
-  document.getElementById('addon-grid').innerHTML = ADDONS.map(a => {
-    const parts = [];
-    parts.push(`${fmt(a.setup)} setup`);
-    if(a.perUser) parts.push(`${fmt(a.perUser)}/user/mo`);
-    if(a.flatMonthly) parts.push(`${fmt(a.flatMonthly)}/mo infra`);
-    return `<div class="mod-card addon-card${selectedAddons.has(a.id)?' selected':''}" onclick="toggleAddon('${a.id}')">
-      <div class="check">${checkSVG()}</div>
-      <div class="mod-body">
-        <div class="mod-name">${a.name}</div>
-        <div class="mod-price">${parts.join(' · ')}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function toggle(id){
-  selected.has(id) ? selected.delete(id) : selected.add(id);
-  renderModules(); calc();
-}
-
-function toggleAddon(id){
-  selectedAddons.has(id) ? selectedAddons.delete(id) : selectedAddons.add(id);
-  renderAddons(); calc();
-}
-
-function calc(){
-  const mods = MODULES.filter(m => selected.has(m.id));
-  const adds = ADDONS.filter(a => selectedAddons.has(a.id));
-
-  const totalSetup = effectiveSetup() + adds.reduce((s,a) => s + a.setup, 0);
-  const subMods = mods.reduce((s,m) => s + m.perUser * users, 0);
-  const subAdds = adds.reduce((s,a) => s + a.perUser * users + a.flatMonthly, 0);
-  const extraSources = Math.max(0, sources - 3) * 250;
-  const totalMonthly = subMods + subAdds + extraSources;
-
-  let html = '';
-  if(mods.length === 0 && adds.length === 0){
-    html = '<div class="empty">Select at least one module to see an estimate.</div>';
   } else {
-    if(hasAllCore()){
-      const coreMonthly = CORE_IDS.reduce((s,id) => {
-        const m = MODULES.find(x => x.id === id);
-        return s + (m ? m.perUser * users : 0);
-      }, 0);
-      html += `<div class="summary-line"><span>Core bundle (AI Chat + P&L + Cashflow + BS)</span><span>${fmt(coreMonthly)}/mo</span></div>`;
-      mods.filter(m => !CORE_IDS.includes(m.id)).forEach(m => {
-        html += `<div class="summary-line"><span>${m.name}</span><span>${fmt(m.perUser * users)}/mo</span></div>`;
-      });
+    el.innerHTML = `<span class="val">${fmt(platformFee)} / user / mo</span>`;
+  }
+}
+function setPlatformFee(v) { platformFee = parseFloat(v) || 0; calc(); }
+
+// ── SOURCES ───────────────────────────────────
+function renderSources() {
+  document.getElementById('src-extra-label').textContent = fmt(srcExtraSetup);
+
+  const rows = sources.map((s, idx) => {
+    // Determine if THIS row is included or extra (only counts among selected)
+    let tag;
+    if (s.selected) {
+      const positionAmongSelected = sources.filter((x, i) => x.selected && i <= idx).length;
+      tag = positionAmongSelected <= srcIncluded
+        ? `<span class="src-tag included">Included</span>`
+        : `<span class="src-tag">+${fmt(srcExtraSetup)} setup</span>`;
     } else {
-      mods.forEach(m => {
-        html += `<div class="summary-line"><span>${m.name}</span><span>${fmt(m.perUser * users)}/mo</span></div>`;
-      });
+      tag = `<span class="src-tag" style="opacity:.5">—</span>`;
+    }
+
+    return `<div class="src-row${s.selected ? ' selected' : ''}">
+      <div class="check" onclick="toggleSrc('${s.id}')">${chk()}</div>
+      <div>
+        <input class="src-input" value="${s.name.replace(/"/g,'&quot;')}" placeholder="Source name"
+               onchange="updateSrc('${s.id}','name',this.value)">
+        <input class="src-input" value="${s.type.replace(/"/g,'&quot;')}" placeholder="Description"
+               style="font-size:11px;color:#78716c;font-weight:400"
+               onchange="updateSrc('${s.id}','type',this.value)">
+      </div>
+      ${tag}
+      <button class="src-delete" onclick="deleteSrc('${s.id}')" title="Remove">×</button>
+    </div>`;
+  }).join('');
+
+  document.getElementById('sources-table').innerHTML = rows + `
+    <div class="src-add-row" onclick="addSrc()">
+      <span style="font-size:14px;line-height:1">+</span> Add data source
+    </div>`;
+}
+
+function toggleSrc(id) {
+  const s = sources.find(x => x.id === id);
+  if (s) { s.selected = !s.selected; renderSources(); calc(); }
+}
+function updateSrc(id, field, val) {
+  const s = sources.find(x => x.id === id);
+  if (s) { s[field] = val; calc(); }
+}
+function deleteSrc(id) {
+  sources = sources.filter(s => s.id !== id);
+  renderSources(); calc();
+}
+function addSrc() {
+  sources.push({ id: 's' + (nextSrcId++), name: '', type: '', selected: true });
+  renderSources(); calc();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.src-input');
+    if (inputs.length) inputs[inputs.length - 2].focus();
+  }, 50);
+}
+
+// ── MODULES (tiered) ──────────────────────────
+function renderModules() {
+  const html = TIERS.map(t => {
+    const allSelected = tierAllSelected(t);
+    const selectedCount = t.modules.filter(m => selMods.has(m.id)).length;
+
+    // Bundle info text
+    let bundleText;
+    if (allSelected) {
+      bundleText = `<span class="tier-bundle-active"><strong>${fmt(prices['__bundle_' + t.id])}</strong> bundle applied · all ${t.modules.length} modules</span>`;
+    } else {
+      bundleText = `<span><strong>${fmt(prices['__bundle_' + t.id])}</strong> for full tier (${t.modules.length} modules)</span>`;
+    }
+
+    const moduleCards = t.modules.map(m => {
+      const p = prices[m.id];
+      let priceHTML;
+      if (editMode) {
+        priceHTML = `<div class="price-edit">
+          <input class="price-field" type="number" value="${p.setup}" onchange="setPrice('${m.id}','setup',this.value)" onclick="event.stopPropagation()">
+          <span class="psep">setup (USD)</span>
+        </div>`;
+      } else {
+        priceHTML = `<div class="card-price">${
+          allSelected ? `<s>${fmt(p.setup)}</s> bundled` : `${fmt(p.setup)} setup`
+        }${m.hint ? ` · <span style="opacity:.7">${m.hint}</span>` : ''}</div>`;
+      }
+      return `<div class="card${selMods.has(m.id) ? ' selected' : ''}" onclick="toggleMod('${m.id}')">
+        <div class="check">${chk()}</div>
+        <div class="card-body">
+          <div class="card-name">${m.name}</div>
+          <span class="badge ${t.badgeCls}">${t.badge}</span>
+          ${priceHTML}
+        </div>
+      </div>`;
+    }).join('');
+
+    let tierBundleEdit = '';
+    if (editMode) {
+      tierBundleEdit = `<input class="price-field" type="number" value="${prices['__bundle_' + t.id]}" onchange="setBundlePrice('${t.id}',this.value)" style="width:90px"> <span class="psep">bundle</span>`;
+    }
+
+    return `<div class="tier-group">
+      <div class="tier-head">
+        <span class="tier-name ${t.cls}">${t.name} ${selectedCount > 0 ? `· ${selectedCount}/${t.modules.length}` : ''}</span>
+        <span class="tier-bundle-info">${editMode ? tierBundleEdit : bundleText}</span>
+      </div>
+      <div class="grid-2">${moduleCards}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('tier-groups').innerHTML = html;
+}
+
+function setPrice(id, f, v) { prices[id][f] = parseFloat(v) || 0; calc(); }
+function setBundlePrice(tierId, v) { prices['__bundle_' + tierId] = parseFloat(v) || 0; calc(); renderModules(); }
+
+// ── ADDONS ────────────────────────────────────
+function renderAddons() {
+  document.getElementById('addon-grid').innerHTML = ADDONS.map(a => {
+    const p = prices[a.id];
+    let priceHTML;
+    if (editMode) {
+      priceHTML = `<div class="price-edit">
+        <input class="price-field" type="number" value="${p.setup}" onchange="setAddonPrice('${a.id}','setup',this.value)" onclick="event.stopPropagation()">
+        <span class="psep">setup</span>
+        ${p.flatMonthly > 0 ? `<input class="price-field" type="number" value="${p.flatMonthly}" onchange="setAddonPrice('${a.id}','flatMonthly',this.value)" onclick="event.stopPropagation()"><span class="psep">flat/mo</span>` : ''}
+      </div>`;
+    } else {
+      const parts = [`${fmt(p.setup)} setup`];
+      if (p.flatMonthly > 0) parts.push(`${fmt(p.flatMonthly)}/mo infra`);
+      priceHTML = `<div class="card-price">${parts.join(' · ')}</div>`;
+    }
+    return `<div class="card${selAdd.has(a.id) ? ' selected' : ''}" onclick="toggleAddon('${a.id}')">
+      <div class="check">${chk()}</div>
+      <div class="card-body">
+        <div class="card-name">${a.name}</div>
+        <span class="badge ${a.badgeCls}">${a.badgeTxt}</span>
+        ${priceHTML}
+      </div>
+    </div>`;
+  }).join('');
+}
+function setAddonPrice(id, f, v) { prices[id][f] = parseFloat(v) || 0; calc(); }
+
+// ── CALC ──────────────────────────────────────
+function calc() {
+  const selModsArr = [];
+  TIERS.forEach(t => t.modules.forEach(m => { if (selMods.has(m.id)) selModsArr.push({ ...m, tier: t }); }));
+  const adds = ADDONS.filter(a => selAdd.has(a.id));
+  const selSrc = selSourcesArr();
+  const extraSrcCount = Math.max(0, selSrc.length - srcIncluded);
+
+  const platformBase = selModsArr.length > 0 ? platformFee * users : 0;
+  const addMonthly = adds.reduce((s, a) => s + (prices[a.id].flatMonthly || 0), 0);
+  const subscriptionMonthly = platformBase + addMonthly; // before yearly discount
+  const effectiveMonthly = billing === 'yearly' ? subscriptionMonthly * (1 - yearlyDiscount) : subscriptionMonthly;
+  const setup = totalSetup();
+  const annualBeforeDisc = subscriptionMonthly * 12 + setup;
+  const annualWithDisc   = effectiveMonthly * 12 + setup;
+  const annualSavings    = annualBeforeDisc - annualWithDisc;
+
+  // Summary
+  let html = '';
+  if (!selModsArr.length && !adds.length && !selSrc.length) {
+    html = '<div class="sum-empty">Select modules to see estimate.</div>';
+  } else {
+    if (selModsArr.length > 0) {
+      html += `<div class="sum-line"><span>Platform fee · ${users} user${users!==1?'s':''}</span><span>${fmt(platformBase)}/mo</span></div>`;
+    }
+    if (selSrc.length > 0) {
+      html += `<div class="sum-line"><span>Data sources (${selSrc.length})</span><span>${extraSrcCount > 0 ? '+' + fmt(extraSrcCount * srcExtraSetup) + ' setup' : 'included'}</span></div>`;
     }
     adds.forEach(a => {
-      const mo = a.perUser * users + a.flatMonthly;
-      html += `<div class="summary-line"><span>${a.name}</span><span>${fmt(mo)}/mo</span></div>`;
+      const mo = prices[a.id].flatMonthly || 0;
+      if (mo > 0) html += `<div class="sum-line"><span>${a.name}</span><span>${fmt(mo)}/mo</span></div>`;
     });
-    if(extraSources > 0){
-      html += `<div class="summary-line"><span>Extra data sources (${sources - 3})</span><span>${fmt(extraSources)}/mo</span></div>`;
+    if (billing === 'yearly' && subscriptionMonthly > 0) {
+      html += `<div class="sum-line strikethrough"><span>Subscription before discount</span><span>${fmt(subscriptionMonthly)}/mo</span></div>`;
     }
   }
 
   document.getElementById('summary-lines').innerHTML = html;
-  document.getElementById('monthly-total').textContent = fmt(totalMonthly);
-  document.getElementById('setup-note').textContent = totalSetup > 0 ? `One-time setup: ${fmt(totalSetup)}` : '';
-  document.getElementById('total-period').textContent = `/month · ${users} user${users > 1 ? 's' : ''}`;
+  document.getElementById('monthly-label').textContent = billing === 'yearly' ? 'Effective monthly (after −15%)' : 'Monthly subscription';
+  document.getElementById('monthly-total').textContent = fmt(effectiveMonthly);
+  document.getElementById('total-sub').textContent = `/month · ${users} user${users !== 1 ? 's' : ''} · ${billing === 'yearly' ? 'billed yearly' : 'billed monthly'}`;
+  document.getElementById('setup-total').textContent = fmt(setup);
 
+  const annualRow = document.getElementById('annual-row');
+  const savingsRow = document.getElementById('savings-row');
+  if (subscriptionMonthly > 0 || setup > 0) {
+    annualRow.style.display = 'flex';
+    document.getElementById('annual-total').textContent = fmt(annualWithDisc);
+    if (billing === 'yearly' && annualSavings > 0) {
+      savingsRow.style.display = 'flex';
+      document.getElementById('savings-total').textContent = '−' + fmt(annualSavings);
+    } else {
+      savingsRow.style.display = 'none';
+    }
+  } else {
+    annualRow.style.display = 'none';
+    savingsRow.style.display = 'none';
+  }
+
+  return {
+    selModsArr, adds, selSrc, extraSrcCount,
+    platformBase, addMonthly,
+    subscriptionMonthly, effectiveMonthly,
+    setup, annualWithDisc, annualSavings,
+  };
+}
+
+function renderAll() { renderPlatformFee(); renderSources(); renderModules(); renderAddons(); calc(); }
+
+function toggleMod(id)   { selMods.has(id) ? selMods.delete(id) : selMods.add(id); renderModules(); calc(); }
+function toggleAddon(id) { selAdd.has(id)  ? selAdd.delete(id)  : selAdd.add(id);  renderAddons();  calc(); }
+
+function toggleEdit() {
+  editMode = !editMode;
+  const btn = document.getElementById('edit-btn');
+  btn.classList.toggle('active', editMode);
+  btn.textContent = editMode ? '✓ Done' : '✏ Edit prices';
+  renderAll();
+}
+
+function setCurrency(c) {
+  currency = c;
+  document.querySelectorAll('.sum-currency .cur-btn').forEach(b => b.classList.toggle('active', b.textContent === c));
+  renderAll();
+}
+
+function setBilling(b) {
+  billing = b;
+  document.getElementById('bill-monthly').classList.toggle('active', b === 'monthly');
+  document.getElementById('bill-yearly').classList.toggle('active', b === 'yearly');
+  calc();
 }
 
 document.getElementById('users-slider').addEventListener('input', e => {
@@ -469,15 +873,144 @@ document.getElementById('users-slider').addEventListener('input', e => {
   document.getElementById('users-val').textContent = users;
   calc();
 });
-document.getElementById('sources-slider').addEventListener('input', e => {
-  sources = parseInt(e.target.value);
-  document.getElementById('sources-val').textContent = sources;
-  calc();
-});
 
-renderModules();
-renderAddons();
-calc();
+// ── PDF ───────────────────────────────────────
+function buildPDFContent() {
+  const data = calc();
+  const today = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+
+  // Sources block
+  let srcBlock;
+  if (data.selSrc.length === 0) {
+    srcBlock = '<div class="pdf-empty">No data sources selected.</div>';
+  } else {
+    srcBlock = `<div class="pdf-source-grid">${
+      data.selSrc.map(s => `<div class="pdf-source-item"><span>${s.name || '—'}</span><span>${s.type || ''}</span></div>`).join('')
+    }</div>`;
+    if (data.extraSrcCount > 0) {
+      srcBlock += `<div style="font-size:10px;color:#78716c;margin-top:8px;font-style:italic">${data.extraSrcCount} additional source${data.extraSrcCount !== 1 ? 's' : ''} beyond included quota → ${fmt(data.extraSrcCount * srcExtraSetup)} added to setup</div>`;
+    } else {
+      srcBlock += `<div style="font-size:10px;color:#78716c;margin-top:8px;font-style:italic">All sources included in base.</div>`;
+    }
+  }
+
+  // Modules — group by tier
+  let modBlock = '';
+  TIERS.forEach(t => {
+    const tierMods = t.modules.filter(m => selMods.has(m.id));
+    if (tierMods.length === 0) return;
+    const allSelected = tierAllSelected(t);
+    if (allSelected) {
+      modBlock += `<div class="pdf-list-item">
+        <span class="pdf-name">${t.name} bundle (${tierMods.map(m => m.name).join(' · ')})</span>
+        <span class="pdf-tier">${t.badge}</span>
+        <span class="pdf-amt">${fmt(prices['__bundle_' + t.id])} setup</span>
+      </div>`;
+    } else {
+      tierMods.forEach(m => {
+        modBlock += `<div class="pdf-list-item">
+          <span class="pdf-name">${m.name}</span>
+          <span class="pdf-tier">${t.badge}</span>
+          <span class="pdf-amt">${fmt(prices[m.id].setup)} setup</span>
+        </div>`;
+      });
+    }
+  });
+  if (!modBlock) modBlock = '<div class="pdf-empty">No modules selected.</div>';
+
+  // Add-ons
+  let addBlock;
+  if (data.adds.length === 0) {
+    addBlock = '<div class="pdf-empty">No add-ons selected.</div>';
+  } else {
+    addBlock = data.adds.map(a => {
+      const p = prices[a.id];
+      const monthly = p.flatMonthly || 0;
+      return `<div class="pdf-list-item">
+        <span class="pdf-name">${a.name}</span>
+        <span class="pdf-tier">${a.badgeTxt}</span>
+        <span class="pdf-amt">${fmt(p.setup)} setup${monthly > 0 ? `<br><span style="color:#78716c;font-weight:400">${fmt(monthly)}/mo</span>` : ''}</span>
+      </div>`;
+    }).join('');
+  }
+
+  const billingLabel = billing === 'yearly' ? 'Yearly billing (−15% on subscription)' : 'Monthly billing';
+
+  return `
+    <div class="pdf-header">
+      <div class="pdf-brand-block">
+        <div class="pdf-brand">CFO Studio</div>
+        <div class="pdf-tag">By incro · Pricing offer</div>
+      </div>
+      <div class="pdf-meta">
+        <div>Generated <strong>${today}</strong></div>
+        <div>Currency: <strong>${currency}</strong></div>
+        <div>${billingLabel}</div>
+      </div>
+    </div>
+
+    <h1 class="pdf-h1">Your CFO Studio configuration</h1>
+    <p class="pdf-lede">A tailored deployment of CFO Studio for ${users} user${users!==1?'s':''}, with the modules, data sources and add-ons listed below. The platform fee covers access to all selected modules for every user.</p>
+
+    <div class="pdf-section">
+      <div class="pdf-section-title">Data sources (${data.selSrc.length})</div>
+      ${srcBlock}
+    </div>
+
+    <div class="pdf-section">
+      <div class="pdf-section-title">Modules (${data.selModsArr.length})</div>
+      ${modBlock}
+      <div style="font-size:10px;color:#78716c;margin-top:10px;font-style:italic">All selected modules are accessible to every user under the platform fee. Tier bundles apply automatically when all modules within a tier are selected.</div>
+    </div>
+
+    <div class="pdf-section">
+      <div class="pdf-section-title">Add-ons (${data.adds.length})</div>
+      ${addBlock}
+    </div>
+
+    <div class="pdf-section">
+      <div class="pdf-section-title">Investment</div>
+      <div class="pdf-totals">
+        <div class="pdf-total-row">
+          <span class="pdf-total-label">One-time setup fee</span>
+          <span class="pdf-total-val">${fmt(data.setup)}</span>
+        </div>
+        <div class="pdf-total-row">
+          <span class="pdf-total-label">Platform fee · ${users} user${users!==1?'s':''} × ${fmt(platformFee)}</span>
+          <span class="pdf-total-val">${fmt(data.platformBase)}/mo</span>
+        </div>
+        ${data.addMonthly > 0 ? `<div class="pdf-total-row">
+          <span class="pdf-total-label">Add-on monthly fees</span>
+          <span class="pdf-total-val">${fmt(data.addMonthly)}/mo</span>
+        </div>` : ''}
+        ${billing === 'yearly' ? `<div class="pdf-total-row" style="color:#059669">
+          <span class="pdf-total-label" style="color:#059669">Yearly discount (−15%)</span>
+          <span class="pdf-total-val" style="color:#059669">−${fmt(data.subscriptionMonthly * 0.15)}/mo</span>
+        </div>` : ''}
+        <div class="pdf-total-row divider">
+          <span class="pdf-total-label">${billing === 'yearly' ? 'Effective monthly subscription' : 'Monthly subscription'}</span>
+          <span class="pdf-total-val">${fmt(data.effectiveMonthly)}/mo</span>
+        </div>
+        <div class="pdf-total-row divider headline">
+          <span class="pdf-total-label">First-year total</span>
+          <span class="pdf-total-val">${fmt(data.annualWithDisc)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pdf-foot">
+      <span>CFO STUDIO · BUILT BY INCRO</span>
+      <span>This offer is valid for 30 days from generation.</span>
+    </div>
+  `;
+}
+
+function generatePDF() {
+  document.getElementById('pdf-doc').innerHTML = buildPDFContent();
+  setTimeout(() => window.print(), 60);
+}
+
+renderAll();
 </script>
 </body>
 </html>
