@@ -399,15 +399,11 @@ input[type=range]::-moz-range-thumb {
   <div class="page-header">
     <div class="eyebrow">Pricing configurator</div>
     <h1 class="page-title">Build your CFO Studio<br>deployment.</h1>
-    <p class="page-subtitle">Select modules, configure data sources, and export a deployment-ready offer in PDF.</p>
+    <p class="page-subtitle">All pricing in USD. Final summary can be displayed in EUR or PLN before exporting.</p>
   </div>
 
   <div class="two-col">
     <div class="left-col">
-
-      <div class="toolbar">
-        <button class="btn-secondary" id="edit-btn" onclick="toggleEdit()">✏ Edit prices</button>
-      </div>
 
       <!-- PLATFORM FEE -->
       <div class="platform-fee-bar">
@@ -570,7 +566,6 @@ const SYM = { USD: '$', EUR: '€', PLN: 'zł' };
 
 // ── STATE ─────────────────────────────────────
 let currency = 'USD';
-let editMode = false;
 let users = 5;
 let billing = 'monthly'; // 'monthly' | 'yearly'
 let selMods = new Set(['chat','pl','cf','bs']);
@@ -622,17 +617,8 @@ function totalSetup() {
 
 // ── PLATFORM FEE ─────────────────────────────
 function renderPlatformFee() {
-  const el = document.getElementById('platform-fee-display');
-  if (editMode) {
-    el.innerHTML = `<div class="platform-fee-edit">
-      <input class="price-field" type="number" value="${platformFee}" onchange="setPlatformFee(this.value)">
-      <span class="psep">USD / user / mo</span>
-    </div>`;
-  } else {
-    el.innerHTML = `<span class="val">${fmt(platformFee)} / user / mo</span>`;
-  }
+  document.getElementById('platform-fee-display').innerHTML = `<span class="val">${fmt(platformFee)} / user / mo</span>`;
 }
-function setPlatformFee(v) { platformFee = parseFloat(v) || 0; calc(); }
 
 // ── SOURCES ───────────────────────────────────
 function renderSources() {
@@ -697,7 +683,6 @@ function renderModules() {
     const allSelected = tierAllSelected(t);
     const selectedCount = t.modules.filter(m => selMods.has(m.id)).length;
 
-    // Bundle info text
     let bundleText;
     if (allSelected) {
       bundleText = `<span class="tier-bundle-active"><strong>${fmt(prices['__bundle_' + t.id])}</strong> bundle applied · all ${t.modules.length} modules</span>`;
@@ -707,17 +692,9 @@ function renderModules() {
 
     const moduleCards = t.modules.map(m => {
       const p = prices[m.id];
-      let priceHTML;
-      if (editMode) {
-        priceHTML = `<div class="price-edit">
-          <input class="price-field" type="number" value="${p.setup}" onchange="setPrice('${m.id}','setup',this.value)" onclick="event.stopPropagation()">
-          <span class="psep">setup (USD)</span>
-        </div>`;
-      } else {
-        priceHTML = `<div class="card-price">${
-          allSelected ? `<s>${fmt(p.setup)}</s> bundled` : `${fmt(p.setup)} setup`
-        }${m.hint ? ` · <span style="opacity:.7">${m.hint}</span>` : ''}</div>`;
-      }
+      const priceHTML = `<div class="card-price">${
+        allSelected ? `<s>${fmt(p.setup)}</s> bundled` : `${fmt(p.setup)} setup`
+      }${m.hint ? ` · <span style="opacity:.7">${m.hint}</span>` : ''}</div>`;
       return `<div class="card${selMods.has(m.id) ? ' selected' : ''}" onclick="toggleMod('${m.id}')">
         <div class="check">${chk()}</div>
         <div class="card-body">
@@ -728,15 +705,10 @@ function renderModules() {
       </div>`;
     }).join('');
 
-    let tierBundleEdit = '';
-    if (editMode) {
-      tierBundleEdit = `<input class="price-field" type="number" value="${prices['__bundle_' + t.id]}" onchange="setBundlePrice('${t.id}',this.value)" style="width:90px"> <span class="psep">bundle</span>`;
-    }
-
     return `<div class="tier-group">
       <div class="tier-head">
         <span class="tier-name ${t.cls}">${t.name} ${selectedCount > 0 ? `· ${selectedCount}/${t.modules.length}` : ''}</span>
-        <span class="tier-bundle-info">${editMode ? tierBundleEdit : bundleText}</span>
+        <span class="tier-bundle-info">${bundleText}</span>
       </div>
       <div class="grid-2">${moduleCards}</div>
     </div>`;
@@ -745,25 +717,13 @@ function renderModules() {
   document.getElementById('tier-groups').innerHTML = html;
 }
 
-function setPrice(id, f, v) { prices[id][f] = parseFloat(v) || 0; calc(); }
-function setBundlePrice(tierId, v) { prices['__bundle_' + tierId] = parseFloat(v) || 0; calc(); renderModules(); }
-
 // ── ADDONS ────────────────────────────────────
 function renderAddons() {
   document.getElementById('addon-grid').innerHTML = ADDONS.map(a => {
     const p = prices[a.id];
-    let priceHTML;
-    if (editMode) {
-      priceHTML = `<div class="price-edit">
-        <input class="price-field" type="number" value="${p.setup}" onchange="setAddonPrice('${a.id}','setup',this.value)" onclick="event.stopPropagation()">
-        <span class="psep">setup</span>
-        ${p.flatMonthly > 0 ? `<input class="price-field" type="number" value="${p.flatMonthly}" onchange="setAddonPrice('${a.id}','flatMonthly',this.value)" onclick="event.stopPropagation()"><span class="psep">flat/mo</span>` : ''}
-      </div>`;
-    } else {
-      const parts = [`${fmt(p.setup)} setup`];
-      if (p.flatMonthly > 0) parts.push(`${fmt(p.flatMonthly)}/mo infra`);
-      priceHTML = `<div class="card-price">${parts.join(' · ')}</div>`;
-    }
+    const parts = [`${fmt(p.setup)} setup`];
+    if (p.flatMonthly > 0) parts.push(`${fmt(p.flatMonthly)}/mo infra`);
+    const priceHTML = `<div class="card-price">${parts.join(' · ')}</div>`;
     return `<div class="card${selAdd.has(a.id) ? ' selected' : ''}" onclick="toggleAddon('${a.id}')">
       <div class="check">${chk()}</div>
       <div class="card-body">
@@ -774,7 +734,6 @@ function renderAddons() {
     </div>`;
   }).join('');
 }
-function setAddonPrice(id, f, v) { prices[id][f] = parseFloat(v) || 0; calc(); }
 
 // ── CALC ──────────────────────────────────────
 function calc() {
@@ -847,14 +806,6 @@ function renderAll() { renderPlatformFee(); renderSources(); renderModules(); re
 
 function toggleMod(id)   { selMods.has(id) ? selMods.delete(id) : selMods.add(id); renderModules(); calc(); }
 function toggleAddon(id) { selAdd.has(id)  ? selAdd.delete(id)  : selAdd.add(id);  renderAddons();  calc(); }
-
-function toggleEdit() {
-  editMode = !editMode;
-  const btn = document.getElementById('edit-btn');
-  btn.classList.toggle('active', editMode);
-  btn.textContent = editMode ? '✓ Done' : '✏ Edit prices';
-  renderAll();
-}
 
 function setCurrency(c) {
   currency = c;
