@@ -570,7 +570,8 @@ let users = 5;
 let billing = 'monthly'; // 'monthly' | 'yearly'
 let selMods = new Set(['chat','pl','cf','bs']);
 let selAdd = new Set();
-let platformFee = 25;     // USD/user/mo
+let platformFee = 900;     // base in PLN
+let platformFeeBase = 'PLN'; // base currency for platform fee
 let srcExtraSetup = 2500; // USD setup per extra source (>2)
 let srcIncluded = 2;
 let yearlyDiscount = 0.15;
@@ -585,6 +586,10 @@ ADDONS.forEach(a => { prices[a.id] = { setup: a.setup, flatMonthly: a.flatMonthl
 
 // ── HELPERS ───────────────────────────────────
 const fmt = n => SYM[currency] + Math.round(n * FX[currency]).toLocaleString('en-US');
+// Convert PLN-based amount to current display currency (rounded), then format
+const fmtPLN = pln => SYM[currency] + Math.round(pln * (FX[currency] / FX.PLN)).toLocaleString('en-US');
+// Get platform fee in USD (the base currency for all module/setup math)
+const platformFeeUSD = () => platformFee / FX.PLN;
 const chk = () => `<svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const selSourcesArr = () => sources.filter(s => s.selected);
 
@@ -617,7 +622,7 @@ function totalSetup() {
 
 // ── PLATFORM FEE ─────────────────────────────
 function renderPlatformFee() {
-  document.getElementById('platform-fee-display').innerHTML = `<span class="val">${fmt(platformFee)} / user / mo</span>`;
+  document.getElementById('platform-fee-display').innerHTML = `<span class="val">${fmtPLN(platformFee)} / user / mo</span>`;
 }
 
 // ── SOURCES ───────────────────────────────────
@@ -743,7 +748,7 @@ function calc() {
   const selSrc = selSourcesArr();
   const extraSrcCount = Math.max(0, selSrc.length - srcIncluded);
 
-  const platformBase = selModsArr.length > 0 ? platformFee * users : 0;
+  const platformBase = selModsArr.length > 0 ? platformFeeUSD() * users : 0;
   const addMonthly = adds.reduce((s, a) => s + (prices[a.id].flatMonthly || 0), 0);
   const subscriptionMonthly = platformBase + addMonthly; // before yearly discount
   const effectiveMonthly = billing === 'yearly' ? subscriptionMonthly * (1 - yearlyDiscount) : subscriptionMonthly;
@@ -928,7 +933,7 @@ function buildPDFContent() {
           <span class="pdf-total-val">${fmt(data.setup)}</span>
         </div>
         <div class="pdf-total-row">
-          <span class="pdf-total-label">Platform fee · ${users} user${users!==1?'s':''} × ${fmt(platformFee)}</span>
+          <span class="pdf-total-label">Platform fee · ${users} user${users!==1?'s':''} × ${fmtPLN(platformFee)}</span>
           <span class="pdf-total-val">${fmt(data.platformBase)}/mo</span>
         </div>
         ${data.addMonthly > 0 ? `<div class="pdf-total-row">
